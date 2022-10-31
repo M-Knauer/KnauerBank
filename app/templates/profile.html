@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Profile
+{% endblock %}
+
+{% block main %}
+<style>
+    table {text-align: left;}
+    td {text-align: right;}
+    input {text-align: center;}
+</style>
+
+<table class="table table-striped">
+    <thead class="thead-dark">
+      <tr style="text-align: center;">
+        <th colspan=2>{{acc.name}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Bank</th>
+        <td>{{acc.bank}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Agency</th>
+        <td>{{acc.agency}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Current account</th>
+        <td>{{acc.ca}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <form action="/profile" method="post">
+    <div class="form-group">
+      <label for="inputEmail">Email</label>
+      <br>
+      <input type="email" class="form-control" required autocomplete="off" name="email" value="{{acc.email}}" aria-describedby="emailHelp">
+    </div>
+    <div class="form-group">
+      <label for="inputPhone">Phone number</label>
+      <br>
+      <input type="text" class="form-control" required autocomplete="off" name="phone" value="{{acc.phone}}">
+    </div>
+    <button type="submit" class="btn btn-primary btn-success">Update</button>
+  </form>
+{% endblock %}

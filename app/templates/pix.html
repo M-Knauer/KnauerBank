@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Pix
+{% endblock %}
+
+{% block main %}
+  <script>
+    function confirmButton() {
+      let cpf = document.getElementById("cpf").value
+      let contact = document.getElementById("contact").value
+
+      if(contact == "" && cpf) {
+        opt = confirm('Are you want to add this contact?');
+        if(opt) {
+          document.getElementById("userInput").value = "True";
+        }
+        else {
+          document.getElementById("userInput").value = "False";
+        }
+      }    
+    }
+
+    function contactChange() {
+      let contact = document.getElementById("contact").value;
+      let cpf = document.getElementById("cpf");
+
+      if(contact != "") {
+        cpf.disabled = true;
+      }
+      else {
+        cpf.disabled = false;
+      }
+    }
+  </script>
+  <form action="/pix" method="post">
+    <div class="form-group">
+      <select class="custom-select mx-auto w-auto" name="contact_cpf" id="contact" onchange="contactChange()">
+        <option selected value="">Contacts</option>
+        {% for contact in contacts %}
+            <option value="{{ contact.cpf }}">{{ contact.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <input type="text" autofocus placeholder="CPF" autocomplete="off" name="cpf" class="form-control" id="cpf" aria-describedby="cpfHelp">
+    </div>
+    <div class="form-group">
+      <input type="text" autofocus placeholder="Value to send" required autocomplete="off" name="value" class="form-control" id="value" aria-describedby="valHelp">
+    </div>
+    <input type="hidden" id="userInput" name="userInput"> 
+    <button type="submit" class="btn btn-success" name="free_button" value="free_button" onClick="confirmButton()"> Send </button> 
+  </form>
+{% endblock %}

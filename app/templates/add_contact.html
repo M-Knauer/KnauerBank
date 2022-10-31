@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {% if contact %}
+        Update contact
+    {% else %}
+        Add contact
+    {% endif %}
+{% endblock%}
+
+{% block main %}
+    {% if contact %}
+        <form action="/edit_contact/{{contact.id_contacts}}" method="post">
+            <div class="form-group">
+                <input type="text" autofocus placeholder="Name" required autocomplete="off" name="name" class="form-control" id="name" aria-describedby="nameHelp" value="{{contact.name}}">
+            </div>
+            <div class="form-group">
+                <input type="email" autofocus placeholder="Email" autocomplete="off" name="email" class="form-control" id="email" aria-describedby="emailHelp" value="{{contact.email}}">
+            </div>
+            <div class="form-group">
+                <input type="text" autofocus placeholder="cpf" autocomplete="off" name="cpf" class="form-control" id="cpf" aria-describedby="cpfHelp" value="{{contact.cpf}}">
+            </div>
+            <div class="form-group">
+                <input type="text" autofocus placeholder="Phone number" autocomplete="off" name="phone" class="form-control" id="phone" aria-describedby="phoneHelp" value="{{contact.phone}}">
+            </div>
+            <button type="submit" class="btn btn-success">Update</button>
+        </form>
+    {% else %}
+        <form action="/add_contact" method="post">
+            <div class="form-group">
+                <input type="text" autofocus placeholder="Name" required autocomplete="off" name="name" class="form-control" id="name" aria-describedby="nameHelp" value="">
+            </div>
+            <div class="form-group">
+                <input type="email" autofocus placeholder="Email" autocomplete="off" name="email" class="form-control" id="email" aria-describedby="emailHelp" value="">
+            </div>
+            <div class="form-group">
+                <input type="text" autofocus placeholder="CPF" autocomplete="off" name="cpf" class="form-control" id="cpf" aria-describedby="cpfHelp" value="{{cpf_recived}}">
+            </div>
+            <div class="form-group">
+                <input type="text" autofocus placeholder="Phone number" autocomplete="off" name="phone" class="form-control" id="phone" aria-describedby="phoneHelp" value="">
+            </div>
+            <button type="submit" class="btn btn-success">Add</button>
+        </form>
+    {% endif %}
+{% endblock %}
