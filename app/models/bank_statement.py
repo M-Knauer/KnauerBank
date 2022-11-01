@@ -1,6 +1,6 @@
 from app.configs.base import Base
 
-from sqlalchemy import Column, Date, Float, ForeignKey, Integer
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer
 
 
 class BankStatement(Base):
@@ -9,7 +9,7 @@ class BankStatement(Base):
     balance = Column(Float, nullable=False)
     money = Column(Float, nullable=False)
     total = Column(Float, nullable=False)
-    date = Column(Date, nullable=False)
+    date = Column(DateTime, nullable=False)
     account_id = Column(Integer, ForeignKey("accounts.id"))
     
     def __init__(self, balance, money, total, date, account_id):

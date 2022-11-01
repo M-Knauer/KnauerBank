@@ -24,14 +24,14 @@
                                 <td>${{"%.2f"|format(b.balance)}}</td>
                                 <td>${{"%.2f"|format(b.money)}}</td>
                                 <td>${{"%.2f"|format(b.total)}}</td>
-                                <td>{{b.date}}</td>
+                                <td>{{b.date.strftime("%m-%d-%Y")}}</td>
                             </tr>
                         {% else %}
                             <tr class="table-success">
                                 <td>${{"%.2f"|format(b.balance)}}</td>
                                 <td>${{"%.2f"|format(b.money)}}</td>
                                 <td>${{"%.2f"|format(b.total)}}</td>
-                                <td>{{b.date}}</td>
+                                <td>{{b.date.strftime("%m-%d-%Y")}}</td>
                             </tr>
                         {% endif %}
                     {% endfor %}

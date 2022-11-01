@@ -35,11 +35,11 @@ class ContactsRepository():
         except Exception:
             return Exception.with_traceback
     
-    def update(self, id, name, email, cpf, phone):
+    def update(self, id, name, email, phone):
         with DbConnectionHandler() as db:
             try:
                 db.session.query(Contacts).filter(Contacts.id_contacts == id)\
-                    .update({"name": name, "email": email, "cpf": cpf, "phone": phone})
+                    .update({"name": name, "email": email, "phone": phone})
                 db.session.commit()
             except Exception:
                 db.session.rollback()

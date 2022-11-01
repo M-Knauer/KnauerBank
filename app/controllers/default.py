@@ -1,6 +1,4 @@
 from tempfile import mkdtemp
-from urllib.request import urlopen
-
 from app import app
 from app.helper import (down_payment, login_required, outgoing_money,
                         set_agency, set_ca)
@@ -141,11 +139,13 @@ def add_contact():
     except Exception:
         raise Exception.with_traceback
 
-@app.route("/delete/<int:id_contacts>")
+@app.route("/delete/<int:id_contacts>", methods=["POST"])
 def delete(id_contacts):
     try:
-        db_cr.delete(id_contacts)
-        flash("Contact has been deleted!")
+        check = request.form.get("check")
+        if check:
+            db_cr.delete(id_contacts)
+            flash("Contact has been deleted!")
         return redirect("/")
     except Exception:
         raise Exception
@@ -154,19 +154,30 @@ def delete(id_contacts):
 @app.route("/edit_contact/<int:id_contacts>", methods=["GET", "POST"])
 @login_required
 def edit_contact(id_contacts):
-    if request.method == "POST":
-        name = request.form.get("name")
-        email = request.form.get("email")
-        cpf = request.form.get("cpf")
-        phone = request.form.get("phone")
+    try:
+        if request.method == "POST":
+            name = request.form.get("name").title()
+            email = request.form.get("email")
+            phone = request.form.get("phone")
 
-        db_cr.update(id=id_contacts, name=name, email=email, cpf=cpf, phone=phone)
-        flash("Contact has been updated!")
+            if phone == "":
+                flash("Phone number cannot be empty")
+                raise InputError
+            elif not phone.isnumeric():
+                flash("Phone number must be a number")
+                raise InputError
 
-        return redirect("/")
+            db_cr.update(id=id_contacts, name=name, email=email, phone=phone)
+            flash("Contact has been updated!")
 
-    contact = db_cr.select_by_id(id_contacts)
-    return render_template("add_contact.html", contact=contact)
+            return redirect("/")
+
+        contact = db_cr.select_by_id(id_contacts)
+        return render_template("add_contact.html", contact=contact)
+    except InputError:
+        return redirect(f"/edit_contact/{id_contacts}")
+    except Exception:
+        return Exception.with_traceback
 
 @app.route("/pix", methods=["GET", "POST"])
 @login_required
@@ -184,10 +195,17 @@ def pix():
 
             if value < 0:
                 flash("Value cannot be a negative number")
-                return redirect("/pix")
+                raise InputError
             elif (acc.balance - value) < 0:
                 flash("Not enough money")
-                return redirect("/pix")
+                raise InputError
+            elif contact_cpf == "":
+                if len(cpf) > 0 and not cpf.isnumeric():
+                    flash("CPF must be a numeric value")
+                    raise InputError
+                elif cpf.strip() == "":
+                    flash("CPF cannot be empty")
+                    raise InputError
 
             # add money to destination account
             if dest:
@@ -224,9 +242,10 @@ def pix():
 
         contacts = db_cr.select_all_by_id(session["user_id"])
         return render_template("pix.html", contacts=contacts)
-    
+    except InputError:
+        return redirect("/pix")
     except ValueError:
-        flash("Values must be a number")
+        flash("Value must be a number")
         return redirect("/pix")
     except Exception:
         raise Exception.with_traceback
@@ -244,6 +263,9 @@ def profile():
                 raise InputError
             elif phone == "":
                 flash("Phone number cannot be empty")
+                raise InputError
+            elif not phone.isnumeric():
+                flash("Phone number must be numeric")
                 raise InputError
             
             db_pr.update(id=session["user_id"], email=email, phone=phone)
@@ -265,7 +287,7 @@ def profile():
 def register():
     if request.method == "POST":
         
-        name = request.form.get("name")
+        name = request.form.get("name").title()
         pw = request.form.get("password")
         pw_confirm = request.form.get("passwordConfirm")
         email = request.form.get("email")
