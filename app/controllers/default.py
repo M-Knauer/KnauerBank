@@ -1,3 +1,5 @@
+import re
+from signal import raise_signal
 from tempfile import mkdtemp
 from app import app
 from app.helper import (down_payment, login_required, outgoing_money,
@@ -118,7 +120,6 @@ def add_money():
         flash("Values must be a number")
         return redirect("/add_money")
 
-# consertar o erro
 
 @app.route("/add_contact", methods=["GET", "POST"])
 @login_required
@@ -285,75 +286,102 @@ def profile():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    if request.method == "POST":
-        
-        name = request.form.get("name").title()
-        pw = request.form.get("password")
-        pw_confirm = request.form.get("passwordConfirm")
-        email = request.form.get("email")
-        cpf = request.form.get("cpf")
-        phone = request.form.get("phone")
+    try:
+        if request.method == "POST":
+            
+            name = request.form.get("name").title()
+            pw = request.form.get("password")
+            pw_confirm = request.form.get("passwordConfirm")
+            email = request.form.get("email")
+            cpf = request.form.get("cpf")
+            phone = request.form.get("phone")
 
-        if not name:
-            return "Error name!" 
-        elif not pw:
-            return "Error pw!" 
-        elif not email:
-            return "Error email!"
-        elif not cpf:
-            return "Error cpf!"
-        elif not phone:
-            return "Error phone!"
-        if pw_confirm != pw:
-            return "paasword not equal"
+            if not name: 
+                flash("Name error!")
+                raise InputError 
+            elif not pw:
+                flash("Pw error!")
+                raise InputError 
+            elif not email:
+                flash("Email error!")
+                raise InputError 
+            elif not cpf:
+                flash("CPF error!")
+                raise InputError
+            elif not cpf.isnumeric():
+                flash("CPF must be numeric!")
+                raise InputError  
+            elif not phone:
+                flash("Phone error!")
+                raise InputError
+            elif not phone.isnumeric():
+                flash("Phone number must be numeric!")
+                raise InputError  
+            if pw_confirm != pw:
+                flash("Password not equal!")
+                raise InputError 
 
-        agency = set_agency()
-        ca = set_ca()
-        pwHash = generate_password_hash(pw)
-        
-        db_ar.insert(name=name, password=pwHash, email=email, cpf=cpf, phone=phone, agency=agency, ca=ca)
-        flash("You was successfully registered!")
-        return redirect("/")
-        
-    return render_template("register.html")
+            agency = set_agency()
+            ca = set_ca()
+            pwHash = generate_password_hash(pw)
+            
+            db_ar.insert(name=name, password=pwHash, email=email, cpf=cpf, phone=phone, agency=agency, ca=ca)
+            flash("You was successfully registered!")
+            return redirect("/")
+            
+        return render_template("register.html")
+
+    except InputError:
+        return redirect("/register")
+    except Exception:
+        return Exception
+
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """Log user in"""
+    try:
+        """Log user in"""
 
-    # Forget any user_id
-    session.clear()
+        # Forget any user_id
+        session.clear()
 
-    # User reached route via POST (as by submitting a form via POST)
-    if request.method == "POST":
+        # User reached route via POST (as by submitting a form via POST)
+        if request.method == "POST":
 
-        # Ensure username was submitted
-        if not request.form.get("cpf"):
-            return ("must provide cpf", 403)
+            # Ensure username was submitted
+            if not request.form.get("cpf"):
+                flash("must provide cpf")
+                raise InputError
 
-        # Ensure password was submitted
-        elif not request.form.get("password"):
-            return ("must provide password", 403)
+            # Ensure password was submitted
+            elif not request.form.get("password"):
+                flash("must provide password")
+                raise InputError
 
-        # Query database for cpf
-        cpf = request.form.get("cpf")
-        rows = db_ar.select_by_cpf(cpf)
+            # Query database for cpf
+            cpf = request.form.get("cpf")
+            rows = db_ar.select_by_cpf(cpf)
+        
+            # Ensure username exists and password is correct
+            if not rows or not check_password_hash(rows.password, request.form.get("password")):
+                flash("invalid username and/or password")
+                raise InputError
+
+            # Remember which user has logged in
+            session["user_id"] = rows.id
+
+            # Redirect user to home page
+            flash("You are logged!")
+            return redirect("/")
+
+        # User reached route via GET (as by clicking a link or via redirect)
+        else:
+            return render_template("login.html")
     
-        # Ensure username exists and password is correct
-        if not rows or not check_password_hash(rows.password, request.form.get("password")):
-           return ("invalid username and/or password", 403)
+    except InputError:
+        return redirect("/login")
 
-        # Remember which user has logged in
-        session["user_id"] = rows.id
-
-        # Redirect user to home page
-        flash("You are logged!")
-        return redirect("/")
-
-    # User reached route via GET (as by clicking a link or via redirect)
-    else:
-        return render_template("login.html")
 
 
 @app.route("/logout")
