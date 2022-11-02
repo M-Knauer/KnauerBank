@@ -26,7 +26,6 @@ def outgoing_money(balance, val, account_id):
 
 def down_payment(balance, val, account_id):
     db_br.insert(balance=balance - val, money= val, total=balance, account_id=account_id)
-    print(account_id)
 
 def login_required(f):
     """

@@ -28,5 +28,3 @@ class Person(Base):
         self.email = email
         self.cpf = cpf
         self.phone = phone
-
-    
