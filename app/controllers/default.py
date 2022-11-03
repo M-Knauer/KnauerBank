@@ -296,7 +296,20 @@ def register():
             cpf = request.form.get("cpf")
             phone = request.form.get("phone")
 
-            if not name: 
+            person = db_pr.select_by_cpf(cpf=cpf)
+            person_email = db_pr.select_by_email(email=email)
+            person_phone = db_pr.select_by_phone(phone=phone)
+
+            if person_email:
+                flash("E-mail already registered")
+                raise InputError
+            elif person_phone:
+                flash("Phone number already registered")
+                raise InputError
+            elif person:
+                flash("CPF already registered")
+                raise InputError
+            elif not name: 
                 flash("Name error!")
                 raise InputError 
             elif not pw:
@@ -317,7 +330,7 @@ def register():
             elif not phone.isnumeric():
                 flash("Phone number must be numeric!")
                 raise InputError  
-            if pw_confirm != pw:
+            elif pw_confirm != pw:
                 flash("Password not equal!")
                 raise InputError 
 
@@ -334,7 +347,8 @@ def register():
     except InputError:
         return redirect("/register")
     except Exception:
-        return Exception
+        flash("An error has ocurred while registering")
+        return redirect("/register")
 
 
 

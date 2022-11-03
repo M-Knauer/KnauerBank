@@ -22,3 +22,24 @@ class PersonRepository():
             except Exception:
                 db.session.rollback()
                 return Exception
+
+    def select_by_cpf(self, cpf):
+        with DbConnectionHandler() as db:
+            try:
+                return db.session.query(Person).filter(Person.cpf == cpf).one_or_none()
+            except Exception:
+                return Exception
+    
+    def select_by_email(self, email):
+        with DbConnectionHandler() as db:
+            try:
+                return db.session.query(Person).filter(Person.email == email).one_or_none()
+            except Exception:
+                return Exception
+    
+    def select_by_phone(self, phone):
+        with DbConnectionHandler() as db:
+            try:
+                return db.session.query(Person).filter(Person.phone == phone).one_or_none()
+            except Exception:
+                return Exception
