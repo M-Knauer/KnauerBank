@@ -1,7 +1,7 @@
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import pool 
 
 from alembic import context
 import os
@@ -15,7 +15,7 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
     
-heroku_uri = os.environ.get("heroku_URI")
+heroku_uri = os.getenv("CLEARDB_DATABASE_URL")
 db_url = heroku_uri
 config.set_main_option("sqlalchemy.url", db_url)
 

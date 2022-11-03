@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 class DbConnectionHandler:
     def __init__(self) -> None:
         sqlpw = os.environ.get("sqlpw")
-        string_uri = os.environ.get("heroku_URI")
+        string_uri = os.getenv("CLEARDB_DATABASE_URL")
         self.__connection_string = string_uri
         #f'mysql+pymysql://root:{sqlpw}@localhost:3306/test_bank'
         self.__engine = self.__create_database_engine()
