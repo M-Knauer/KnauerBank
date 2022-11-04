@@ -7,16 +7,16 @@
 {% block main %}
     <form action="/register" method="post">
       <div class="form-group">
-        <input type="text" autofocus placeholder="Full name" autocomplete="off" name="name" class="form-control" id="name" aria-describedby="nameHelp">
+        <input type="text" autofocus maxlength="50" placeholder="Full name" required name="name" class="form-control" id="name" aria-describedby="nameHelp">
       </div>
       <div class="form-group">
-        <input type="email" autofocus placeholder="Email" autocomplete="off" name="email" class="form-control" id="email" aria-describedby="emailHelp">
+        <input type="email" placeholder="Email" maxlength="50" required name="email" class="form-control" id="email" aria-describedby="emailHelp">
       </div>
       <div class="form-group">
-        <input type="text" autofocus placeholder="CPF" autocomplete="off" name="cpf" class="form-control" id="cpf" aria-describedby="cpfHelp">
+        <input type="text" maxlength="11" minlength="11" placeholder="CPF" autocomplete="off" name="cpf" class="form-control" id="cpf" aria-describedby="cpfHelp">
       </div>
       <div class="form-group">
-        <input type="text" autofocus placeholder="Phone number" autocomplete="off" name="phone" class="form-control" id="phone" aria-describedby="phoneHelp">
+        <input type="text" placeholder="Phone number" maxlength="11" autocomplete="off" name="phone" class="form-control" id="phone" aria-describedby="phoneHelp">
       </div>
       <div class="form-group" style="margin-left: -7px;" >
         <input type="password" name="password" placeholder="Password" autocomplete="current-password" required id="id_password" class="form-control">

@@ -131,12 +131,21 @@ def add_contact():
             cpf = request.form.get("cpf")
             phone = request.form.get("phone")
 
+            if not cpf.isnumeric():
+                flash("CPF must be numeric")
+                raise InputError
+            elif not phone.isnumeric():
+                flash("Phone number must be numeric")
+                raise InputError
+                
             db_cr.add_contact(name=name, email=email, cpf=cpf, phone=phone, account_id=session["user_id"])
             flash("New contact has been added!")
             
             return redirect("/")
         
         return render_template("add_contact.html")
+    except InputError:
+        return redirect("add_contact")
     except Exception:
         raise Exception.with_traceback
 
@@ -332,7 +341,10 @@ def register():
                 raise InputError  
             elif pw_confirm != pw:
                 flash("Password not equal!")
-                raise InputError 
+                raise InputError
+            elif (len(cpf) > 11 and len(cpf) < 11) or (len(phone) > 11 and len(phone) < 11):
+                flash("maximum input length exceeded")
+                raise InputError
 
             agency = set_agency()
             ca = set_ca()
