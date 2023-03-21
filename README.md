@@ -1,4 +1,4 @@
-Bank application website
+<h1>Bank application website</h1>
 
 O projeto da vez simula um site bancário, essa aplicação foi feita usando o framework flask do python, HTML, CSS, JS, MySQL e SQLAlchemy como ORM. Nele é possível se cadastrar, fazer "depósitos", "pix", checar o extrato bancário, adicionar contatos para facilitar a transferência por pix, excluir e editar contatos e outras coisinhas mais.
 
